@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Fluxo de Caixa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Gerenciador de Fluxo de Caixa</h2>
+        <form id="transactionForm">
+            <label for="description">Descrição:</label>
+            <input type="text" id="description" name="description" required>
+            <label for="amount">Valor:</label>
+            <input type="number" id="amount" name="amount" step="0.01" required>
+            <label for="type">Tipo:</label>
+            <select id="type" name="type" required>
+                <option value="income">Entrada</option>
+                <option value="expense">Saída</option>
+            </select>
+            <input type="submit" value="Adicionar Transação">
+        </form>
+        <h3>Fluxo de Caixa</h3>
+        <table id="transactionTable">
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+            <tbody id="transactionBody">
+                <!-- Transações serão adicionadas aqui via JavaScript -->
+            </tbody>
+        </table>
+        <h3>Total: <span id="totalAmount">0.00</span></h3>
+    </div>
+
+    <script>
+        document.getElementById('transactionForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let description = document.getElementById('description').value;
+            let amount = parseFloat(document.getElementById('amount').value);
+            let type = document.getElementById('type').value;
+
+            if (type === 'expense') {
+                amount = -amount; // Para despesas, tornamos o valor negativo
+            }
+
+            addTransaction(description, amount);
+            updateTotal();
+            this.reset();
+        });
+
+        function addTransaction(description, amount) {
+            let table = document.getElementById('transactionBody');
+            let newRow = table.insertRow();
+            let cell1 = newRow.insertCell(0);
+            let cell2 = newRow.insertCell(1);
+            let cell3 = newRow.insertCell(2);
+
+            cell1.textContent = description;
+            cell2.textContent = amount.toFixed(2);
+            cell3.textContent = amount >= 0 ? 'Entrada' : 'Saída';
+        }
+
+        function updateTotal() {
+            let total = 0;
+            document.querySelectorAll('#transactionBody tr').forEach(function(row) {
+                total += parseFloat(row.cells[1].textContent);
+            });
+            document.getElementById('totalAmount').textContent = total.toFixed(2);
+        }
+    </script>
+</body>
+</html>
